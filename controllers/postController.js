@@ -1,4 +1,5 @@
 const models = require("../models");
+const Validator = require("fastest-validator");
 
 // Create Post
 const createPost = async (req, res) => {
@@ -11,6 +12,24 @@ const createPost = async (req, res) => {
       categoryId,
       userId,
     };
+
+    const schema = {
+      title: { type: "string", optional: false, max: "100" },
+      content: { type: "string", optional: false, max: "500" },
+      categoryId: { type: "number", optional: false },
+    };
+
+    const v = new Validator();
+    const check = v.compile(schema);
+    const validationResponse = check(post);
+
+    if (validationResponse !== true) {
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: validationResponse,
+      });
+    }
+
     const result = await models.Post.create(post);
     if (result) {
       res.status(201).json({
@@ -61,7 +80,7 @@ const getPosts = async (req, res) => {
 // Update Post
 const updatePost = async (req, res) => {
   const id = req.params.id;
-  // const userId = 1;
+  const userId = 1;
 
   try {
     const { title, content, imageUrl, categoryId } = req.body;
@@ -72,6 +91,23 @@ const updatePost = async (req, res) => {
       imageUrl,
       categoryId,
     };
+
+    const schema = {
+      title: { type: "string", optional: false, max: 100 },
+      content: { type: "string", optional: false, max: 500 },
+      categoryId: { type: "number", optional: false },
+    };
+
+    const v = new Validator();
+    const check = v.compile(schema);
+    const validationResponse = check(updatedPost);
+
+    if (validationResponse !== true) {
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: validationResponse,
+      });
+    }
 
     const result = await models.Post.update(updatedPost, { where: { id, userId } });
     if (result) {

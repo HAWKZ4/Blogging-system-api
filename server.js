@@ -1,5 +1,5 @@
 const express = require("express");
-const app = express()
+const app = express();
 const http = require("http");
 const postRoutes = require("./routes/postRoutes");
 const port = 3000;
