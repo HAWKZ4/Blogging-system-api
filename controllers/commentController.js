@@ -1,11 +1,11 @@
 const models = require("../models");
-const Validator = require("fastest-validator");
+const validationInput = require("../utils/validationInput");
 
 // Create comment
 const createComment = async (req, res) => {
   try {
     const { content, userId, postId } = req.body;
-    const comment = {
+    const commentInfo = {
       content,
       userId,
       postId,
@@ -15,16 +15,7 @@ const createComment = async (req, res) => {
       content: { type: "string", optional: false, max: "500" },
     };
 
-    const v = new Validator();
-    const check = v.compile(schema);
-    const validationResponse = check(comment);
-
-    if (validationResponse !== true) {
-      return res.status(400).json({
-        message: "Validation failed",
-        errors: validationResponse,
-      });
-    }
+    validationInput(commentInfo, schema, res);
 
     const result = await models.Comment.create(comment);
     if (result) {
@@ -78,36 +69,31 @@ const updateComment = async (req, res) => {
   const id = req.params.id;
   const userId = 1;
 
+  const { content } = req.body;
+
+  const updatedcommentInfo = {
+    content,
+  };
+
+  const schema = {
+    content: { type: "string", optional: false, max: 500 },
+  };
+
+  validationInput(updatedcommentInfo, schema, res);
+
   try {
-    const { content } = req.body;
+    const isExists = await models.Comment.findByPk(id);
 
-    const updatedcomment = {
-      content,
-    };
-
-    const schema = {
-      content: { type: "string", optional: false, max: 500 },
-    };
-
-    const v = new Validator();
-    const check = v.compile(schema);
-    const validationResponse = check(updatedcomment);
-
-    if (validationResponse !== true) {
-      return res.status(400).json({
-        message: "Validation failed",
-        errors: validationResponse,
-      });
-    }
-
-    const result = await models.Comment.update(updatedcomment, { where: { id, userId } });
-    if (result) {
-      res.status(200).json({
-        message: "comment updated successfully",
-        updatedcomment,
-      });
-    } else {
-      res.status(404).json({ message: "comment not found" });
+    if (isExists) {
+      const result = await models.Comment.update(updatedcommentInfo, { where: { id, userId } });
+      if (result) {
+        res.status(200).json({
+          message: "Comment updated successfully",
+          updatedcommentInfo,
+        });
+      } else {
+        return res.status(404).json({ message: "Comment not found" });
+      }
     }
   } catch (error) {
     res.status(500).json({ message: "Something went wrong", error });
@@ -131,4 +117,4 @@ const deleteComment = async (req, res) => {
   }
 };
 
-module.exports = { createComment, getComments, getComment,gi };
+module.exports = { createComment, getComments, getComment, updateComment, deleteComment };
