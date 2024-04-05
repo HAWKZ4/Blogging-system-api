@@ -1,4 +1,5 @@
 const models = require("../models");
+const Validator = require("fastest-validator");
 
 const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/generateToken");
@@ -9,6 +10,24 @@ const generateToken = require("../utils/generateToken");
 
 const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
+  const userInfo = { name, email, password };
+
+  const schema = {
+    name: { type: "string", optional: false, max: 100 },
+    email: { type: "string", optional: false, max: 100 },
+    password: { type: "string", optional: false, max: 100 },
+  };
+
+  const v = new Validator();
+  const check = v.compile(schema);
+  const validationResponse = check(userInfo);
+
+  if (validationResponse !== true) {
+    return res.status(400).json({
+      message: "Validation failed",
+      errors: validationResponse,
+    });
+  }
 
   try {
     const emailAlreadyExist = await models.User.findOne({ where: { email } });
@@ -35,6 +54,24 @@ const registerUser = async (req, res) => {
 
 authUser = async (req, res) => {
   const { email, password } = req.body;
+  const userInfo = { email, password };
+
+  const schema = {
+    email: { type: "string", optional: false, max: 100 },
+    password: { type: "string", optional: false, max: 100 },
+  };
+
+  const v = new Validator();
+  const check = v.compile(schema);
+  const validationResponse = check(userInfo);
+
+  if (validationResponse !== true) {
+    return res.status(400).json({
+      message: "Validation failed",
+      errors: validationResponse,
+    });
+  }
+
   try {
     const user = await models.User.findOne({ where: { email } });
 
