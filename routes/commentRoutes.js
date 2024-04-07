@@ -8,7 +8,9 @@ const {
   deleteComment,
 } = require("../controllers/commentController");
 
-router.route("/").get(getComments).post(createComment);
-router.route("/:id").get(getComment).put(updateComment).delete(deleteComment);
+const checkAuth = require("../middlewares/authMiddleware"); // Middleware
+
+router.route("/").get(getComments).post(checkAuth, createComment);
+router.route("/:id").get(getComment).put(checkAuth, updateComment).delete(checkAuth, deleteComment);
 
 module.exports = router;

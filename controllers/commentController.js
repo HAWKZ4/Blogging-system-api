@@ -17,7 +17,8 @@ const createComment = async (req, res) => {
 
     validationInput(commentInfo, schema, res);
 
-    const result = await models.Comment.create(comment);
+    const result = await models.Comment.create(commentInfo);
+
     if (result) {
       res.status(201).json({
         message: "comment created successfully",

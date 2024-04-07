@@ -21,7 +21,7 @@ const createPost = async (req, res) => {
 
     validationInput(postInfo, schema, res);
 
-    const result = await models.Post.create(post);
+    const result = await models.Post.create(postInfo);
     if (result) {
       res.status(201).json({
         message: "Post created successfully",

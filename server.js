@@ -4,6 +4,8 @@ const http = require("http");
 const postRoutes = require("./routes/postRoutes");
 const userRoutes = require("./routes/userRoutes");
 const commentRoutes = require("./routes/commentRoutes");
+const cookieParser = require("cookie-parser");
+const errorHandler = require("./middlewares/errorMiddlware");
 
 require("dotenv").config();
 
@@ -11,11 +13,14 @@ const port = 3000;
 
 const server = http.createServer(app);
 
+app.use(cookieParser());
 app.use(express.json());
 
 app.use("/posts", postRoutes);
 app.use("/users", userRoutes);
 app.use("/comments", commentRoutes);
+
+app.use(errorHandler);
 
 server.listen(port, () => {
   console.log(`Running on port ${port}`);
