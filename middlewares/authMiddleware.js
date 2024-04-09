@@ -7,7 +7,7 @@ const checkAuth = (req, res, next) => {
   if (token) {
     try {
       const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-      req.uesrData = decodedToken;
+      req.userData = decodedToken;
       next();
     } catch (error) {
       throw new Error("Not authorized, token failed");

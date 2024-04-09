@@ -3,12 +3,15 @@ const validationInput = require("../utils/validationInput");
 
 // Create comment
 const createComment = async (req, res) => {
+  const userId = req.userData.userId;
+
   try {
-    const { content, userId, postId } = req.body;
+    const { content, postId } = req.body;
+
     const commentInfo = {
       content,
-      userId,
       postId,
+      userId,
     };
 
     const schema = {
@@ -26,8 +29,8 @@ const createComment = async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(500);
-    error;
+    console.error("Error in create comment", error);
+    res.status(500).json({ message: "Failed to create comment", error });
   }
 };
 
@@ -43,10 +46,8 @@ const getComment = async (req, res) => {
       res.status(404).json({ message: "comment not found" });
     }
   } catch (error) {
-    res.status(500).json({
-      message: "Something went wrong!",
-      error,
-    });
+    console.error("Error in fetch comment", error);
+    res.status(500).json({ message: "Failed to get comment", error });
   }
 };
 
@@ -58,17 +59,15 @@ const getComments = async (req, res) => {
       res.status(200).json(comments);
     }
   } catch (error) {
-    res.status(500).json({
-      message: "Something went wrong!",
-      error,
-    });
+    console.error("Error in fetch comments", error);
+    res.status(500).json({ message: "Failed to get all comments", error });
   }
 };
 
 // Update comment
 const updateComment = async (req, res) => {
   const id = req.params.id;
-  const userId = 1;
+  const userId = req.userData.userId;
 
   const { content } = req.body;
 
@@ -97,24 +96,26 @@ const updateComment = async (req, res) => {
       }
     }
   } catch (error) {
-    res.status(500).json({ message: "Something went wrong", error });
+    console.error("Error in update comment ", error);
+    res.status(500).json({ message: "Failed to update comment", error });
   }
 };
 
 // Delete comment
 const deleteComment = async (req, res) => {
   const id = req.params.id;
-  // const userId = 1;
+  const userId = req.userData.userId;
 
   try {
-    const result = await models.Comment.destroy({ where: { id } });
+    const result = await models.Comment.destroy({ where: { id, userId } });
     if (result) {
       res.status(200).json({ message: "comment deleted successfully" });
     } else {
       res.status(404).json({ message: "comment not found" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Something went wrong", error });
+    console.error("Error in delete comment", error);
+    res.status(500).json({ message: "Failed to delete comment", error });
   }
 };
 

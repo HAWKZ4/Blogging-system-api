@@ -35,7 +35,8 @@ const registerUser = async (req, res) => {
       res.status(201).json({ message: "User created successfully" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Something went wrong!", error });
+    console.error("Error user registration", error);
+    res.status(500).json({ message: "Failed to register user", error });
   }
 };
 
@@ -65,7 +66,8 @@ authUser = async (req, res) => {
       res.status(401).json({ message: "Invalid credentials" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Something went wrong!", error });
+    console.error("Error user authentication :", error);
+    res.status(500).json({ message: "Failed to authenticate user", error });
   }
 };
 
