@@ -9,13 +9,14 @@ const validationInput = require("../utils/validationInput");
 // @access Public
 
 const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
-  const userInfo = { name, email, password };
+  const { name, email, password, addressId } = req.body;
+  const userInfo = { name, email, password, addressId };
 
   const schema = {
     name: { type: "string", optional: false, max: 100 },
     email: { type: "string", optional: false, max: 100 },
     password: { type: "string", optional: false, max: 100 },
+    addressId: { type: "number", optional: false, max: 10 },
   };
 
   validationInput(userInfo, schema, res);
@@ -28,7 +29,7 @@ const registerUser = async (req, res) => {
     } else {
       const hashedPassword = bcrypt.hashSync(password, 10);
 
-      const user = { name, email, password: hashedPassword };
+      const user = { name, email, password: hashedPassword, addressId, roleId: 333 }; //  Only admins could change the users roles later
 
       await models.User.create(user);
       generateToken(res, user.email, user.id);
