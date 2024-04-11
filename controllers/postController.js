@@ -43,7 +43,8 @@ const getPost = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const result = await models.Post.findByPk(id);
+    // Post belongs to many categories && Post belongs to just one user
+    const result = await models.Post.findByPk(id, { include: [models.Category, models.User] });
     if (result) {
       res.status(200).json(result);
     } else {
