@@ -8,6 +8,7 @@ const commentRoutes = require("./routes/commentRoutes");
 const imageRoutes = require("./routes/imageRoutes");
 const cookieParser = require("cookie-parser");
 const errorHandler = require("./middlewares/errorMiddlware");
+const test = require("./controllers/testController");
 
 require("dotenv").config();
 
@@ -24,6 +25,7 @@ app.use("/posts", postRoutes);
 app.use("/users", userRoutes);
 app.use("/comments", commentRoutes);
 app.use("/images", imageRoutes);
+// app.use("/test", test); JUST FOR TESTING
 
 app.use(errorHandler);
 
